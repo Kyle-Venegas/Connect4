@@ -29,13 +29,13 @@ class Board:
                 return True
         #diagonals
         row = INITIAL_DIAGONAL_INDEX
-        while row <= 5:
+        while row <= GRID_BOTTOM_INDEX:
             for i in range(0, 4):
                 if self.check_slash(i, row):
                     return True
             row += 1
         row = INITIAL_DIAGONAL_INDEX
-        while row <= 5:
+        while row <= GRID_BOTTOM_INDEX:
             for i in range(6, 2, -1):
                 if self.check_backslash(i, row):
                     return True
@@ -45,7 +45,7 @@ class Board:
     def check_col(self, col, player):
         x = int(col)
         counter = 1
-        for i in range(6):
+        for i in range(GRID_HEIGHT):
             if game.grid[i][x] == game.grid[i-1][x] == playerLetter(player):
                 counter += 1
         return counter == 4
@@ -53,7 +53,7 @@ class Board:
     def check_row(self, row, player):
         y = int(row)
         counter = 1
-        for i in range(7):
+        for i in range(GRID_WIDTH):
             if game.grid[y][i] == game.grid[y][i-1] == playerLetter(player):
                 counter += 1
             if game.grid[y][i] == playerLetter(player) != game.grid[y][i-1]:
