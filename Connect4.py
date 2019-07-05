@@ -88,7 +88,6 @@ def who(turn):
 def playerLetter(player):
     return "X" if player == 1 else "O"
 
-
 import os
 
 turn = 1
