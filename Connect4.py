@@ -9,7 +9,8 @@ class Board:
         self.grid = [["_" for i in range(GRID_WIDTH)] for j in range(GRID_HEIGHT)]
 
     def draw(self):
-        print("\n  0    1    2    3    4    5    6")
+        columns = "    ".join([str(i) for i in range(GRID_WIDTH)])
+        print(" ", columns)
         for row in self.grid:
             print(row)
 
@@ -98,7 +99,7 @@ def play_Connect4():
         os.system("clear")
         game.draw()
         player = who(turn)
-        col = input("\nPlayer {}\nDrop it in what column?: ".format(player))
+        col = int(input("\nPlayer {}\nDrop it in what column?: ".format(player)))
         game.drop(col, player)
         if game.win(player):
             game.draw()
