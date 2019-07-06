@@ -15,7 +15,6 @@ class Board:
             print(row)
 
     def drop(self, col, player):
-        col = int(col)
         for i in range(GRID_BOTTOM_INDEX, -1, -1):
             if self.grid[i][col] == "_":
                 self.grid[i][col] = player_Letter(player)
@@ -44,7 +43,7 @@ class Board:
         return False
 
     def check_col(self, col, player):
-        x = int(col)
+        x = col
         counter = 1
         for i in range(GRID_HEIGHT):
             if self.grid[i][x] == self.grid[i-1][x] == player_Letter(player):
@@ -52,7 +51,7 @@ class Board:
         return counter == 4
 
     def check_row(self, row, player):
-        y = int(row)
+        y = row
         counter = 1
         for i in range(GRID_WIDTH):
             if self.grid[y][i] == self.grid[y][i-1] == player_Letter(player):
@@ -62,7 +61,7 @@ class Board:
         return counter == 4
 
     def check_slash(self, col, row, player):
-        y = int(row) - 1
+        y = row - 1
         counter = 1
         a = int(col) + 1
         b = a + 3
@@ -73,7 +72,7 @@ class Board:
         return counter == 4
 
     def check_backslash(self, col, row, player):
-        y = int(row) - 1
+        y = row - 1
         counter = 1
         a = int(col) - 1
         b = a - 3
