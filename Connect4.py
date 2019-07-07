@@ -1,6 +1,7 @@
 GRID_WIDTH = 7
 GRID_HEIGHT = 6
-GRID_BOTTOM_INDEX = 5
+GRID_TOP_INDEX = 0
+FIRST_COL_INDEX = 0
 INITIAL_DIAGONAL_INDEX = 3
 
 class Board:
@@ -10,12 +11,12 @@ class Board:
 
     def draw(self):
         columns = "    ".join([str(i) for i in range(GRID_WIDTH)])
-        print(" ", columns)
+        print("\n ", columns)
         for row in self.grid:
             print(row)
 
     def drop(self, col, player):
-        for i in range(GRID_BOTTOM_INDEX, -1, -1):
+        for i in range(GRID_HEIGHT - 1, -1, -1):
             if self.grid[i][col] == "_":
                 self.grid[i][col] = player_Letter(player)
                 break
@@ -27,16 +28,16 @@ class Board:
         for i in range(GRID_HEIGHT):
             if self.check_row(i, player):
                 return True
-        #diagonals
+        # Diagonals are only possible in row index 3 and above.
         row = INITIAL_DIAGONAL_INDEX
-        while row <= GRID_BOTTOM_INDEX:
-            for i in range(0, 4):
+        while row <= GRID_HEIGHT - 1:
+            for i in range(FIRST_COL_INDEX, GRID_WIDTH - 2):
                 if self.check_slash(i, row, player):
                     return True
             row += 1
         row = INITIAL_DIAGONAL_INDEX
-        while row <= GRID_BOTTOM_INDEX:
-            for i in range(6, 2, -1):
+        while row <= GRID_HEIGHT - 1:
+            for i in range(GRID_WIDTH, FIRST_COL_INDEX + 2, -1):
                 if self.check_backslash(i, row, player):
                     return True
             row += 1
@@ -45,42 +46,51 @@ class Board:
     def check_col(self, col, player):
         x = col
         counter = 1
-        for i in range(GRID_HEIGHT):
-            if self.grid[i][x] == self.grid[i-1][x] == player_Letter(player):
+        for i in range(GRID_HEIGHT - 2, -1, -1):
+            if self.grid[i][x] == self.grid[i+1][x] == player_Letter(player):
                 counter += 1
-        return counter == 4
+            # Resets counter when something like 'X''X''X''O''X''X' happens.
+            if self.grid[i][x] == player_Letter(player) != self.grid[i+1][x]:
+                counter = 1
+        return counter >= 4
 
     def check_row(self, row, player):
         y = row
         counter = 1
-        for i in range(GRID_WIDTH):
+        for i in range(FIRST_COL_INDEX + 1, GRID_WIDTH):
             if self.grid[y][i] == self.grid[y][i-1] == player_Letter(player):
                 counter += 1
+            # Resets counter when something like 'X''X''X''O''X''X' happens.
             if self.grid[y][i] == player_Letter(player) != self.grid[y][i-1]:
                 counter = 1
-        return counter == 4
+        return counter >= 4
 
+    # check_slash & check_backslash checks for consecutive values starting from
+    # coordinates col & row, then works its way diagonally. 
     def check_slash(self, col, row, player):
-        y = row - 1
+        # 'y' and 'x' are modified to represent the second element in the consecutive series. 
+        y = row - 1  
+        x = col + 1
         counter = 1
-        a = int(col) + 1
-        b = a + 3
-        for i in range(a, b):
+        # 'x' sets the range to only check 3 elements elements. 
+        # 'i' goes through the columns, then 'y' elevates it to the previous index, creating
+        # a stair pattern going up.
+        for i in range(x, x + 3):
             if self.grid[y][i] == self.grid[y+1][i-1] == player_Letter(player):
                 counter += 1
                 y -= 1
-        return counter == 4
+        return counter >= 4
 
     def check_backslash(self, col, row, player):
         y = row - 1
+        x = col - 1
         counter = 1
-        a = int(col) - 1
-        b = a - 3
-        for i in range(a, b, -1):
+        # check_backslash works the same way, but in reverse.
+        for i in range(x, x - 3, -1):
             if self.grid[y][i] == self.grid[y+1][i+1] == player_Letter(player):
                 counter += 1
                 y -= 1
-        return counter == 4
+        return counter >= 4
 
 def who(turn):
     return 2 if (turn % 2 == 0) else 1
