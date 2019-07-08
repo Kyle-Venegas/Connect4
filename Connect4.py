@@ -1,8 +1,12 @@
 GRID_WIDTH = 7
 GRID_HEIGHT = 6
 GRID_TOP_INDEX = 0
+GRID_BOTTOM_INDEX = GRID_HEIGHT - 1
 FIRST_COL_INDEX = 0
-INITIAL_DIAGONAL_INDEX = 3
+LAST_COL_INDEX = GRID_WIDTH - 1
+MIN_DIAGONAL_ROW_INDEX = 3
+MAX_SLASH_COL_INDEX = LAST_COL_INDEX - 2
+MAX_BACKSLASH_COL_INDEX = FIRST_COL_INDEX + 2
 
 class Board:
 
@@ -16,7 +20,7 @@ class Board:
             print(row)
 
     def drop(self, col, player):
-        for i in range(GRID_HEIGHT - 1, -1, -1):
+        for i in range(GRID_BOTTOM_INDEX, -1, -1):
             if self.grid[i][col] == "_":
                 self.grid[i][col] = player_Letter(player)
                 break
@@ -29,15 +33,15 @@ class Board:
             if self.check_row(i, player):
                 return True
         # Diagonals are only possible in row index 3 and above.
-        row = INITIAL_DIAGONAL_INDEX
-        while row <= GRID_HEIGHT - 1:
-            for i in range(FIRST_COL_INDEX, GRID_WIDTH - 2):
+        row = MIN_DIAGONAL_ROW_INDEX
+        while row <= GRID_BOTTOM_INDEX:
+            for i in range(FIRST_COL_INDEX, MAX_SLASH_COL_INDEX):
                 if self.check_slash(i, row, player):
                     return True
             row += 1
-        row = INITIAL_DIAGONAL_INDEX
-        while row <= GRID_HEIGHT - 1:
-            for i in range(GRID_WIDTH, FIRST_COL_INDEX + 2, -1):
+        row = MIN_DIAGONAL_ROW_INDEX
+        while row <= GRID_BOTTOM_INDEX:
+            for i in range(LAST_COL_INDEX, MAX_BACKSLASH_COL_INDEX, -1):
                 if self.check_backslash(i, row, player):
                     return True
             row += 1
@@ -46,7 +50,7 @@ class Board:
     def check_col(self, col, player):
         x = col
         counter = 1
-        for i in range(GRID_HEIGHT - 2, -1, -1):
+        for i in range(GRID_BOTTOM_INDEX - 1, -1, -1):
             if self.grid[i][x] == self.grid[i+1][x] == player_Letter(player):
                 counter += 1
             # Resets counter when something like 'X''X''X''O''X''X' happens.
@@ -69,7 +73,7 @@ class Board:
     # coordinates col & row, then works its way diagonally. 
     def check_slash(self, col, row, player):
         # 'y' and 'x' are modified to represent the second element in the consecutive series. 
-        y = row - 1  
+        y = row - 1
         x = col + 1
         counter = 1
         # 'x' sets the range to only check 3 elements elements. 
